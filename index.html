@@ -3,65 +3,864 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projekt Cloud API</title>
+    <meta name="description" content="Cloud Commerce API — Dokumentacja interfejsu REST dla aplikacji e-commerce">
+    <title>Cloud Commerce API — Dokumentacja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0284c7; --secondary: #0c4a6e; --bg: #f8fafc; --text: #0f172a; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
-        h1 { color: var(--primary); margin: 10px 0; }
-        h3 { color: var(--secondary); margin-top: 25px; border-left: 4px solid var(--primary); padding-left: 10px; }
-        .endpoint-list { list-style: none; padding: 0; }
-        .endpoint-item { background: #f8fafc; margin-bottom: 12px; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; align-items: center; }
-        .method { font-weight: bold; color: white; padding: 4px 10px; border-radius: 6px; margin-right: 15px; min-width: 60px; text-align: center; font-size: 0.85rem; }
-        .get { background: #10b981; } .post { background: #f59e0b; }
-        .step-list { padding-left: 20px; }
-        .step-list li { margin-bottom: 10px; }
-        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 0.95rem; }
-        .github-link { display: inline-block; background: #1f2937; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: background 0.3s; }
-        .github-link:hover { background: #000; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #64748b;
+            --accent: #06b6d4;
+            --accent-dark: #0891b2;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --code-bg: #1e293b;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            color: var(--primary);
+            background: var(--bg);
+            line-height: 1.7;
+        }
+
+        /* ─ Navigation ─────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            height: 70px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* ─ Hero Section ───────────────────────────────────────── */
+        .hero {
+            margin-top: 70px;
+            padding: 120px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--secondary);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .cta-button:hover {
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(6, 182, 212, 0.2);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--accent);
+            margin-left: 16px;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        /* ─ Main Container ─────────────────────────────────────── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* ─ Sections ───────────────────────────────────────────── */
+        section {
+            padding: 100px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        section:first-child {
+            border-top: none;
+        }
+
+        section h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        section h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        section h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 40px 0 20px 0;
+            color: var(--primary);
+        }
+
+        section p {
+            color: var(--secondary);
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        /* ─ Endpoint Cards ─────────────────────────────────────── */
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .endpoint-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .endpoint-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .endpoint-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 24px rgba(6, 182, 212, 0.1);
+        }
+
+        .endpoint-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .method-badge {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .method-get {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .method-post {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .method-put {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .method-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .endpoint-path {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .endpoint-description {
+            font-size: 14px;
+            color: var(--secondary);
+            margin-bottom: 16px;
+        }
+
+        .endpoint-auth {
+            font-size: 12px;
+            padding: 8px 12px;
+            background: rgba(6, 182, 212, 0.05);
+            border-left: 2px solid var(--accent);
+            border-radius: 4px;
+            color: var(--primary);
+            margin-top: 16px;
+        }
+
+        /* ─ Code Blocks ────────────────────────────────────────– */
+        .code-example {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-example code {
+            color: #e2e8f0;
+        }
+
+        .highlight-keyword {
+            color: #f472b6;
+        }
+
+        .highlight-string {
+            color: #86efac;
+        }
+
+        .highlight-number {
+            color: #fbbf24;
+        }
+
+        /* ─ Feature Grid ───────────────────────────────────────– */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 32px;
+            margin-top: 50px;
+        }
+
+        .feature-box {
+            padding: 32px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(6, 182, 212, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .feature-box h3 {
+            margin-top: 0;
+        }
+
+        /* ─ Tech Stack ────────────────────────────────────────– */
+        .tech-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .tech-item {
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            text-align: center;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ─ Flow Diagram ──────────────────────────────────────– */
+        .flow-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .arrow {
+            font-size: 28px;
+            color: var(--accent);
+            flex: 0 0 auto;
+        }
+
+        /* ─ Footer ────────────────────────────────────────────– */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 60px 40px;
+            margin-top: 100px;
+        }
+
+        footer .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        footer h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        footer .github-link {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer .github-link:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px;
+            padding-top: 24px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        /* ─ Responsive ────────────────────────────────────────– */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 80px 24px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .container {
+                padding: 0 24px;
+            }
+
+            section h2 {
+                font-size: 32px;
+            }
+
+            section h3 {
+                font-size: 20px;
+            }
+
+            .flow-steps {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>E-commerce REST API</h1>
-            <p>Projekt zaliczeniowy z przedmiotu: <strong>Wprowadzenie do przetwarzania w chmurze</strong></p>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">API</div>
+            <ul class="nav-links">
+                <li><a href="#overview">O aplikacji</a></li>
+                <li><a href="#features">Cechy</a></li>
+                <li><a href="#endpoints">Endpointy</a></li>
+                <li><a href="#flow">Przepływ</a></li>
+                <li><a href="#tech">Technologia</a></li>
+            </ul>
         </div>
+    </nav>
 
-        <h3> Opis projektu</h3>
-        <p>Aplikacja udostępnia interfejs programistyczny (API) do zarządzania sklepem internetowym. System został zbudowany z wykorzystaniem frameworka <strong>FastAPI</strong> oraz bazy danych <strong>SQLite</strong>. Całość została przygotowana zgodnie z architekturą chmurową, używaną na zajęciach.</p>
-
-        <h3> Opis działania systemu</h3>
-        <p>Proces korzystania z API przebiega w następujących etapach:</p>
-        <ol class="step-list">
-            <li><strong>Rejestracja:</strong> Użytkownik tworzy konto. Hasło jest automatycznie haszowane (bcrypt) przed zapisaniem w bazie SQLite.</li>
-            <li><strong>Uwierzytelnianie:</strong> Po podaniu poprawnych danych logowania, serwer generuje i zwraca podpisany kluczem prywatnym token <strong>JWT</strong>.</li>
-            <li><strong>Autoryzacja:</strong> Token ten musi być dołączony do nagłówka (Header) przy próbie złożenia zamówienia. Serwer weryfikuje podpis tokena, zapewniając bezpieczeństwo danych.</li>
-            <li><strong>Zarządzanie danymi:</strong> Każdy użytkownik może przeglądać produkty, ale tylko zalogowani użytkownicy z ważnym tokenem mogą tworzyć zamówienia, które są powiązane z ich identyfikatorem w bazie danych.</li>
-        </ol>
-
-        <h3> Bezpieczeństwo</h3>
-        <ul>
-            <li>Autoryzacja za pomocą tokenów <strong>JWT (JSON Web Tokens)</strong>.</li>
-            <li>Hasła użytkowników są szyfrowane przy użyciu algorytmu <strong>Bcrypt</strong>.</li>
-            <li>Walidacja danych wejściowych za pomocą modeli <strong>Pydantic</strong>.</li>
-        </ul>
-
-        <h3> Dostępne Endpointy</h3>
-        <ul class="endpoint-list">
-            <li class="endpoint-item"><span class="method post">POST</span> <code>/register</code> — Rejestracja nowego użytkownika</li>
-            <li class="endpoint-item"><span class="method post">POST</span> <code>/login</code> — Logowanie i uzyskanie tokena dostępu</li>
-            <li class="endpoint-item"><span class="method get">GET</span> <code>/products</code> — Pobranie listy wszystkich produktów</li>
-            <li class="endpoint-item"><span class="method post">POST</span> <code>/products</code> — Dodanie nowego produktu do bazy</li>
-            <li class="endpoint-item"><span class="method post">POST</span> <code>/orders</code> — Złożenie nowego zamówienia (wymaga tokena)</li>
-        </ul>
-
-        <div class="footer">
-            <p><strong>Kod źródłowy:</strong></p>
-            <a href="https://github.com/konoha0809/cloud_api_project.git" class="github-link" target="_blank">Zobacz projekt na GitHub</a>
-            <p style="margin-top: 15px; font-size: 0.85rem; color: #64748b;">Dokumentacja interaktywna Swagger UI dostępna lokalnie pod adresem: <code>http://127.0.0.1:8000/docs</code></p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Cloud Commerce API</h1>
+            <p>Nowoczesny interfejs REST do zarządzania sklepem internetowym. Zbudowany na FastAPI z bezpieczną autoryzacją JWT i szyfrowaniem haseł Bcrypt.</p>
+            <a href="#endpoints" class="cta-button">Explore Docs</a>
+            <a href="https://github.com/konoha0809/cloud_api_project.git" class="cta-button cta-secondary" target="_blank">GitHub</a>
         </div>
-    </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="container">
+            <h2>O aplikacji</h2>
+            <p>Cloud Commerce API to system REST API zbudowany w oparciu o <strong>FastAPI</strong> i <strong>SQLite</strong>. Aplikacja umożliwia pełne zarządzanie sklepem internetowym — od rejestracji użytkowników, przez zarządzanie produktami, po tworzenie i śledzenie zamówień.</p>
+
+            <h3>Architektura</h3>
+            <p>System wykorzystuje nowoczesne praktyki bezpieczeństwa i architekturę chmurową:</p>
+            <ul style="margin-left: 20px; color: var(--secondary);">
+                <li>✓ Tokeny JWT (JSON Web Tokens) dla autoryzacji</li>
+                <li>✓ Haszowanie haseł algorytmem Bcrypt</li>
+                <li>✓ Walidacja danych wejściowych (Pydantic)</li>
+                <li>✓ Rola-bazowana kontrola dostępu (RBAC)</li>
+                <li>✓ Baza danych relacyjna SQLAlchemy ORM</li>
+            </ul>
+
+            <h3>Przepływ pracy</h3>
+            <div class="flow-diagram">
+                <div class="flow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p><strong>Rejestracja</strong></p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p><strong>Login</strong></p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p><strong>Uzyskanie JWT</strong></p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p><strong>Robimy operacje</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <h2>Cechy systemu</h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Bezpieczeństwo</h3>
+                    <p>JWT tokeny, Bcrypt haszowanie, walidacja Pydantic, rola-bazowana kontrola dostępu</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">📊</div>
+                    <h3>Zarządzanie danymi</h3>
+                    <p>Pełny CRUD dla użytkowników, produktów i zamówień z integracją bazy danych</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Szybkość</h3>
+                    <p>FastAPI z async/await, optymalne zapytania do bazy danych, cache'owanie</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">📚</div>
+                    <h3>Dokumentacja</h3>
+                    <p>Swagger UI dostępny lokalnie na /docs, OpenAPI spec, przykłady request/response</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">🌐</div>
+                    <h3>RESTful API</h3>
+                    <p>Standardowe HTTP metody, prawidłowe kody statusu (200, 201, 400, 404, 422)</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">👥</div>
+                    <h3>Rola Admin</h3>
+                    <p>Administrator może zarządzać użytkownikami, zmienić role, usunąć konta</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Endpoints Section -->
+    <section id="endpoints">
+        <div class="container">
+            <h2>Dostępne Endpointy</h2>
+
+            <h3>Autoryzacja</h3>
+            <div class="endpoints-grid">
+                <div class="endpoint-card">
+                    <span class="method-badge method-post">POST</span>
+                    <div class="endpoint-path">/register</div>
+                    <p class="endpoint-description">Rejestracja nowego użytkownika</p>
+                    <div class="code-example"><code><span class="highlight-string">"username"</span>: <span class="highlight-string">"jan"</span>
+<span class="highlight-string">"password"</span>: <span class="highlight-string">"haslo123"</span></code></div>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-post">POST</span>
+                    <div class="endpoint-path">/login</div>
+                    <p class="endpoint-description">Logowanie i uzyskanie tokena JWT</p>
+                    <div class="code-example"><code>Zwraca <span class="highlight-string">"access_token"</span> válného na 30 minut</code></div>
+                </div>
+            </div>
+
+            <h3>Produkty</h3>
+            <div class="endpoints-grid">
+                <div class="endpoint-card">
+                    <span class="method-badge method-get">GET</span>
+                    <div class="endpoint-path">/products</div>
+                    <p class="endpoint-description">Pobranie wszystkich produktów</p>
+                    <p class="endpoint-auth">✓ Publiczne — nie wymaga tokena</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-get">GET</span>
+                    <div class="endpoint-path">/products/{product_id}</div>
+                    <p class="endpoint-description">Pobranie jednego produktu po ID</p>
+                    <p class="endpoint-auth">✓ Publiczne — nie wymaga tokena</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-post">POST</span>
+                    <div class="endpoint-path">/products</div>
+                    <p class="endpoint-description">Dodanie nowego produktu</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-put">PUT</span>
+                    <div class="endpoint-path">/products/{product_id}</div>
+                    <p class="endpoint-description">Edycja produktu (częściowa aktualizacja)</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-delete">DELETE</span>
+                    <div class="endpoint-path">/products/{product_id}</div>
+                    <p class="endpoint-description">Usunięcie produktu</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+            </div>
+
+            <h3>Zamówienia</h3>
+            <div class="endpoints-grid">
+                <div class="endpoint-card">
+                    <span class="method-badge method-post">POST</span>
+                    <div class="endpoint-path">/orders</div>
+                    <p class="endpoint-description">Złożenie nowego zamówienia</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-put">PUT</span>
+                    <div class="endpoint-path">/orders/{order_id}</div>
+                    <p class="endpoint-description">Edycja zamówienia (zmiana ilości)</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-delete">DELETE</span>
+                    <div class="endpoint-path">/orders/{order_id}</div>
+                    <p class="endpoint-description">Anulowanie zamówienia</p>
+                    <p class="endpoint-auth">🔒 Wymaga tokena JWT</p>
+                </div>
+            </div>
+
+            <h3>Zarządzanie użytkownikami (Admin Only)</h3>
+            <div class="endpoints-grid">
+                <div class="endpoint-card">
+                    <span class="method-badge method-get">GET</span>
+                    <div class="endpoint-path">/admin/users</div>
+                    <p class="endpoint-description">Pobranie listy wszystkich użytkowników</p>
+                    <p class="endpoint-auth">👑 Wymaga roli admin</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-get">GET</span>
+                    <div class="endpoint-path">/admin/users/{user_id}</div>
+                    <p class="endpoint-description">Pobranie danych użytkownika</p>
+                    <p class="endpoint-auth">👑 Wymaga roli admin</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-put">PUT</span>
+                    <div class="endpoint-path">/admin/users/{user_id}</div>
+                    <p class="endpoint-description">Edycja użytkownika (username, hasło, role)</p>
+                    <p class="endpoint-auth">👑 Wymaga roli admin</p>
+                </div>
+
+                <div class="endpoint-card">
+                    <span class="method-badge method-delete">DELETE</span>
+                    <div class="endpoint-path">/admin/users/{user_id}</div>
+                    <p class="endpoint-description">Usunięcie konta użytkownika</p>
+                    <p class="endpoint-auth">👑 Wymaga roli admin</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flow Section -->
+    <section id="flow">
+        <div class="container">
+            <h2>Przepływ autoryzacji</h2>
+            <h3>1. Rejestracja użytkownika</h3>
+            <div class="code-example"><code><span class="highlight-keyword">POST</span> /register
+{
+  <span class="highlight-string">"username"</span>: <span class="highlight-string">"jan"</span>,
+  <span class="highlight-string">"password"</span>: <span class="highlight-string">"moje_haslo_123"</span>
+}</code></div>
+
+            <h3>2. Logowanie i uzyskanie tokena</h3>
+            <div class="code-example"><code><span class="highlight-keyword">POST</span> /login
+{
+  <span class="highlight-string">"username"</span>: <span class="highlight-string">"jan"</span>,
+  <span class="highlight-string">"password"</span>: <span class="highlight-string">"moje_haslo_123"</span>
+}
+
+<span class="highlight-string">Odpowiedź:</span>
+{
+  <span class="highlight-string">"access_token"</span>: <span class="highlight-string">"eyJhbGciOiJIUzI1NiIsInR5..."</span>,
+  <span class="highlight-string">"token_type"</span>: <span class="highlight-string">"bearer"</span>
+}</code></div>
+
+            <h3>3. Użycie tokena w żądaniach</h3>
+            <div class="code-example"><code><span class="highlight-keyword">POST</span> /orders
+<span class="highlight-keyword">Headers:</span>
+Authorization: <span class="highlight-string">"Bearer eyJhbGciOiJIUzI1NiIsInR5..."</span>
+
+{
+  <span class="highlight-string">"product_id"</span>: <span class="highlight-number">5</span>,
+  <span class="highlight-string">"quantity"</span>: <span class="highlight-number">2</span>
+}</code></div>
+
+            <h3>4. Walidacja danych (422 Bad Request)</h3>
+            <p>Jeśli wysłesz niewalidne dane, API zwraca 422 z detalami błędu:</p>
+            <div class="code-example"><code>{
+  <span class="highlight-string">"detail"</span>: <span class="highlight-string">"Błąd walidacji danych"</span>,
+  <span class="highlight-string">"errors"</span>: [
+    {
+      <span class="highlight-string">"pole"</span>: <span class="highlight-string">"body → quantity"</span>,
+      <span class="highlight-string">"problem"</span>: <span class="highlight-string">"ensure this value is greater than 0"</span>
+    }
+  ]
+}</code></div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech">
+        <div class="container">
+            <h2>Technologia</h2>
+            <div class="tech-list">
+                <div class="tech-item">FastAPI</div>
+                <div class="tech-item">SQLAlchemy</div>
+                <div class="tech-item">SQLite</div>
+                <div class="tech-item">Pydantic</div>
+                <div class="tech-item">JWT (PyJWT)</div>
+                <div class="tech-item">Bcrypt</div>
+                <div class="tech-item">Uvicorn</div>
+                <div class="tech-item">Python 3</div>
+            </div>
+
+            <h3 style="margin-top: 60px;">Instalacja i uruchomienie lokalnie</h3>
+            <div class="code-example"><code><span class="highlight-keyword"># Klonowanie repozytorium</span>
+git clone https://github.com/konoha0809/cloud_api_project.git
+cd cloud_api_project
+
+<span class="highlight-keyword"># Instalacja zależności</span>
+pip install -r requirements.txt
+
+<span class="highlight-keyword"># Uruchomienie serwera</span>
+uvicorn main:app --reload
+
+<span class="highlight-keyword"># API będzie dostępne na:</span>
+http://localhost:8000
+
+<span class="highlight-keyword"># Dokumentacja Swagger UI:</span>
+http://localhost:8000/docs</code></div>
+
+            <h3>Zmienne środowiska (.env)</h3>
+            <div class="code-example"><code>DATABASE_URL=sqlite:///./ecommerce.db
+SECRET_KEY=twoj_tajny_klucz_do_JWT
+DEBUG=False</code></div>
+        </div>
+    </section>
+
+
 </body>
 </html>

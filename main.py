@@ -66,7 +66,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": create_access_token({"sub": user.username}), "token_type": "bearer"}
 
 @app.post("/products", response_model=validation.ProductOut)
-def add_product(product: validation.ProductCreate, db: Session = Depends(database_settings.get_db)):
+def add_product(product: validation.ProductCreate, db: Session = Depends(database_settings.get_db), current_user = Depends(get_current_user)):
     return crud.create_product(db, product)
 
 @app.post("/orders")

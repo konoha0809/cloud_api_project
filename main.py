@@ -71,4 +71,4 @@ def add_product(product: validation.ProductCreate, db: Session = Depends(databas
 
 @app.post("/orders")
 def make_order(order: validation.OrderCreate, db: Session = Depends(database_settings.get_db), current_user = Depends(get_current_user)):
-    return crud.create_order(db, order, current_user.id)
+    return crud.create_order(db, order, current_user.id)    

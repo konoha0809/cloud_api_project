@@ -1,60 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cloud API</title>
+    <title>Projekt Cloud API</title>
     <style>
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f5f5f5;
-        }
-
-        .card {
-            border: 1px solid #ccc;
-            padding: 25px;
-            display: inline-block;
-            border-radius: 12px;
-            background-color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        span {
-            color: green;
-            font-weight: bold;
-        }
-
-        a {
-            text-decoration: none;
-            color: #0077cc;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
+        :root { --primary: #0284c7; --secondary: #0c4a6e; --bg: #f8fafc; --text: #0f172a; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin: 10px 0; }
+        h3 { color: var(--secondary); margin-top: 25px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .endpoint-list { list-style: none; padding: 0; }
+        .endpoint-item { background: #f8fafc; margin-bottom: 12px; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; align-items: center; }
+        .method { font-weight: bold; color: white; padding: 4px 10px; border-radius: 6px; margin-right: 15px; min-width: 60px; text-align: center; font-size: 0.85rem; }
+        .get { background: #10b981; } .post { background: #f59e0b; }
+        .step-list { padding-left: 20px; }
+        .step-list li { margin-bottom: 10px; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 0.95rem; }
+        .github-link { display: inline-block; background: #1f2937; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: background 0.3s; }
+        .github-link:hover { background: #000; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>E-commerce Cloud API</h1>
+    <div class="container">
+        <div class="header">
+            <h1>E-commerce REST API</h1>
+            <p>Projekt zaliczeniowy z przedmiotu: <strong>Wprowadzenie do przetwarzania w chmurze</strong></p>
+        </div>
 
-        <p>System Status: <span>ONLINE</span></p>
+        <h3> Opis projektu</h3>
+        <p>Aplikacja udostępnia interfejs programistyczny (API) do zarządzania sklepem internetowym. System został zbudowany z wykorzystaniem frameworka <strong>FastAPI</strong> oraz bazy danych <strong>SQLite</strong>. Całość została przygotowana zgodnie z architekturą chmurową, używaną na zajęciach.</p>
 
-        <p>
-            This API allows you to manage products and customer orders.
-        </p>
+        <h3> Opis działania systemu</h3>
+        <p>Proces korzystania z API przebiega w następujących etapach:</p>
+        <ol class="step-list">
+            <li><strong>Rejestracja:</strong> Użytkownik tworzy konto. Hasło jest automatycznie haszowane (bcrypt) przed zapisaniem w bazie SQLite.</li>
+            <li><strong>Uwierzytelnianie:</strong> Po podaniu poprawnych danych logowania, serwer generuje i zwraca podpisany kluczem prywatnym token <strong>JWT</strong>.</li>
+            <li><strong>Autoryzacja:</strong> Token ten musi być dołączony do nagłówka (Header) przy próbie złożenia zamówienia. Serwer weryfikuje podpis tokena, zapewniając bezpieczeństwo danych.</li>
+            <li><strong>Zarządzanie danymi:</strong> Każdy użytkownik może przeglądać produkty, ale tylko zalogowani użytkownicy z ważnym tokenem mogą tworzyć zamówienia, które są powiązane z ich identyfikatorem w bazie danych.</li>
+        </ol>
 
-        <hr>
+        <h3> Bezpieczeństwo</h3>
+        <ul>
+            <li>Autoryzacja za pomocą tokenów <strong>JWT (JSON Web Tokens)</strong>.</li>
+            <li>Hasła użytkowników są szyfrowane przy użyciu algorytmu <strong>Bcrypt</strong>.</li>
+            <li>Walidacja danych wejściowych za pomocą modeli <strong>Pydantic</strong>.</li>
+        </ul>
 
-        <h3>Documentation (Swagger):</h3>
-        <p><code>/docs</code></p>
+        <h3> Dostępne Endpointy</h3>
+        <ul class="endpoint-list">
+            <li class="endpoint-item"><span class="method post">POST</span> <code>/register</code> — Rejestracja nowego użytkownika</li>
+            <li class="endpoint-item"><span class="method post">POST</span> <code>/login</code> — Logowanie i uzyskanie tokena dostępu</li>
+            <li class="endpoint-item"><span class="method get">GET</span> <code>/products</code> — Pobranie listy wszystkich produktów</li>
+            <li class="endpoint-item"><span class="method post">POST</span> <code>/products</code> — Dodanie nowego produktu do bazy</li>
+            <li class="endpoint-item"><span class="method post">POST</span> <code>/orders</code> — Złożenie nowego zamówienia (wymaga tokena)</li>
+        </ul>
 
-        <p>
-            <a href="https://github.com/konoha0809/Cloud-API-Project">GitHub Repository</a>
-        </p>
+        <div class="footer">
+            <p><strong>Kod źródłowy:</strong></p>
+            <a href="https://github.com/konoha0809/cloud_api_project.git" class="github-link" target="_blank">Zobacz projekt na GitHub</a>
+            <p style="margin-top: 15px; font-size: 0.85rem; color: #64748b;">Dokumentacja interaktywna Swagger UI dostępna lokalnie pod adresem: <code>http://127.0.0.1:8000/docs</code></p>
+        </div>
     </div>
 </body>
 </html>
-

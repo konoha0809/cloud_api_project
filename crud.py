@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-import tables, validation # Оновлено назви модулів
+import tables, validation 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

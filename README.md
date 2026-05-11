@@ -68,7 +68,7 @@ http://127.0.0.1:8000/docs
 Run unit tests with:
 
 ```bash
-pytest
+pytest test_main.py
 ```
 
 ---

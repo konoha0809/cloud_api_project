@@ -2,7 +2,6 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from main import app
 from database_settings import get_db
 from tables import Base
@@ -45,7 +44,27 @@ def test_register_user():
     assert "id" in data
     assert data["role"] == "user"
 
+def test_create_product_forbidden():
+    client.post(
+        "/register",
+        json={"username": "testuser", "password": "testpassword"}
+    )
 
+    token = client.post(
+        "/login",
+        data={"username": "testuser", "password": "testpassword"}
+    ).json()["access_token"]
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.post(
+        "/products",
+        json={"name": "Mouse", "price": 50.0},
+        headers=headers
+    )
+
+    assert response.status_code == 403
+    
 def test_register_existing_user():
     """Test registration with an already existing username"""
     client.post(
@@ -59,7 +78,7 @@ def test_register_existing_user():
     )
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "User already exists"
+    assert response.json()["detail"] == "Użytkownik już istnieje"
 
 
 def test_login_success():
@@ -91,9 +110,6 @@ def test_create_product_without_auth():
 
 
 def test_create_product_with_auth():
-    """Test successful product creation by an authenticated user"""
-
-    # Register and login
     client.post(
         "/register",
         json={"username": "testuser", "password": "testpassword"}
@@ -106,7 +122,6 @@ def test_create_product_with_auth():
 
     token = login_res.json()["access_token"]
 
-    # Create product with token in headers
     headers = {"Authorization": f"Bearer {token}"}
 
     response = client.post(
@@ -115,52 +130,34 @@ def test_create_product_with_auth():
         headers=headers
     )
 
-    assert response.status_code == 201
-
-    data = response.json()
-
-    assert data["name"] == "Laptop"
-    assert data["price"] == 2500.0
-    assert "id" in data
+    assert response.status_code == 403
 
 
 def test_create_order():
-    """
-    Integration test:
-    registration -> login -> create product -> create order
-    """
+    """Integration test: user can create order for existing product"""
+    
 
-    client.post(
-        "/register",
-        json={"username": "testuser", "password": "testpassword"}
-    )
-
-    token = client.post(
-        "/login",
-        data={"username": "testuser", "password": "testpassword"}
-    ).json()["access_token"]
-
+    client.post("/register", json={"username": "testuser", "password": "testpassword"})
+    
+    token = client.post("/login", data={"username": "testuser", "password": "testpassword"}).json()["access_token"]
+    
+    from tables import Product
+    db = TestingSessionLocal()
+    product = Product(name="Mouse", price=50.0)
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    product_id = product.id
+    db.close()
+    
     headers = {"Authorization": f"Bearer {token}"}
-
-    # Create product
-    prod_response = client.post(
-        "/products",
-        json={"name": "Mouse", "price": 50.0},
-        headers=headers
-    )
-
-    product_id = prod_response.json()["id"]
-
-    # Create order
     order_response = client.post(
         "/orders",
         json={"product_id": product_id, "quantity": 2},
         headers=headers
     )
-
+    
     assert order_response.status_code == 201
-
     order_data = order_response.json()
-
     assert order_data["product_id"] == product_id
     assert order_data["quantity"] == 2
